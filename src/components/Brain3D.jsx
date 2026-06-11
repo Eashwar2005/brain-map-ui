@@ -13,14 +13,14 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-// Spaced-out Skill coordinates to prevent overlap and match the reference shape
+// 3D coordinates distributed inside the brain mesh volume (X: [-2.1, 2.0], Y: [-1.6, 1.6], Z: [-0.8, 0.5])
 const SKILLS_DATA = {
   programming: {
     id: "programming",
     title: "Programming",
     percent: "90%",
     color: "#55b3ff",
-    pos: [-2.8, 1.5, 0.8],
+    pos: [-1.8, 1.0, -0.5],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <polyline points="16 18 22 12 16 6"></polyline>
@@ -33,7 +33,7 @@ const SKILLS_DATA = {
     title: "Analytical Thinking",
     percent: "82%",
     color: "#b7ff8a",
-    pos: [0, 2.3, 0.8],
+    pos: [-0.2, 1.6, 0.3],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
@@ -45,7 +45,7 @@ const SKILLS_DATA = {
     title: "Communication",
     percent: "75%",
     color: "#d58cff",
-    pos: [2.8, 1.5, 0.8],
+    pos: [1.8, 1.1, -0.6],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -60,7 +60,7 @@ const SKILLS_DATA = {
     title: "Leadership",
     percent: "70%",
     color: "#ff7ab8",
-    pos: [3.5, -0.1, 0.8],
+    pos: [2.0, -0.2, 0.5],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -74,7 +74,7 @@ const SKILLS_DATA = {
     title: "Writing",
     percent: "55%",
     color: "#86f7ff",
-    pos: [2.5, -1.6, 0.8],
+    pos: [1.3, -1.0, -0.4],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <path d="M12 20h9"></path>
@@ -87,7 +87,7 @@ const SKILLS_DATA = {
     title: "Databases",
     percent: "60%",
     color: "#7ef9ff",
-    pos: [0, -0.9, 0.8],
+    pos: [-0.3, -0.8, -0.8],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
@@ -101,7 +101,7 @@ const SKILLS_DATA = {
     title: "Emotional Intelligence",
     percent: "68%",
     color: "#d58cff",
-    pos: [0, -2.3, 0.8],
+    pos: [0.2, -1.6, 0.4],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -113,7 +113,7 @@ const SKILLS_DATA = {
     title: "Data Structures\n& Algorithms",
     percent: "80%",
     color: "#ffaa66",
-    pos: [-2.5, -1.6, 0.8],
+    pos: [-1.4, -1.1, 0.5],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
@@ -127,7 +127,7 @@ const SKILLS_DATA = {
     title: "UI/UX Design",
     percent: "65%",
     color: "#86f7ff",
-    pos: [-3.5, -0.1, 0.8],
+    pos: [-2.1, -0.1, -0.4],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <rect x="3" y="3" width="7" height="9"></rect>
@@ -142,7 +142,7 @@ const SKILLS_DATA = {
     title: "Problem Solving",
     percent: "85%",
     color: "#ffd76d",
-    pos: [0, 0.3, 0.8],
+    pos: [0.1, 0.2, 0.2],
     isCenter: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
@@ -156,7 +156,7 @@ const SKILLS_DATA = {
 function SkillNode3D({ skill, isActive, onClick }) {
   const { id, title, percent, color, icon, isCenter } = skill;
   return (
-    <Html position={skill.pos} center distanceFactor={18} style={{ pointerEvents: "auto" }}>
+    <Html position={skill.pos} center distanceFactor={22} style={{ pointerEvents: "auto" }}>
       <div
         onClick={onClick}
         style={{
@@ -167,27 +167,27 @@ function SkillNode3D({ skill, isActive, onClick }) {
           userSelect: "none",
           transform: `scale(${isActive ? 1.05 : 0.95})`,
           transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-          width: isCenter ? "110px" : "90px",
+          width: isCenter ? "80px" : "64px",
         }}
       >
         {/* Glow Node Circle */}
         <div
           style={{
-            width: isCenter ? "32px" : "24px",
-            height: isCenter ? "32px" : "24px",
+            width: isCenter ? "22px" : "16px",
+            height: isCenter ? "22px" : "16px",
             borderRadius: "50%",
             background: isActive
               ? `radial-gradient(circle, ${color} 0%, rgba(3, 6, 17, 0.95) 100%)`
               : "rgba(3, 6, 17, 0.85)",
-            border: `1.2px solid ${color}`,
+            border: `1.0px solid ${color}`,
             boxShadow: isActive
-              ? `0 0 18px ${color}, 0 0 30px ${color}50, inset 0 0 6px ${color}`
-              : `0 0 6px ${color}20, inset 0 0 2px ${color}10`,
+              ? `0 0 12px ${color}, 0 0 20px ${color}50, inset 0 0 3px ${color}`
+              : `0 0 4px ${color}15, inset 0 0 1px ${color}05`,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             color: isActive ? "#ffffff" : color,
-            padding: isCenter ? "7px" : "5px",
+            padding: isCenter ? "5px" : "3px",
             transition: "all 0.3s ease",
           }}
         >
@@ -197,7 +197,7 @@ function SkillNode3D({ skill, isActive, onClick }) {
         {/* Labels underneath node */}
         <div
           style={{
-            marginTop: "6px",
+            marginTop: "4px",
             textAlign: "center",
             lineHeight: "1.2",
           }}
@@ -205,7 +205,7 @@ function SkillNode3D({ skill, isActive, onClick }) {
           <div
             style={{
               color: "#ffffff",
-              fontSize: isCenter ? "9.5px" : "8px",
+              fontSize: isCenter ? "8px" : "6.5px",
               fontWeight: isCenter ? "600" : "500",
               fontFamily: "'Outfit', sans-serif",
               letterSpacing: "0.2px",
@@ -217,7 +217,7 @@ function SkillNode3D({ skill, isActive, onClick }) {
           <div
             style={{
               color: color,
-              fontSize: isCenter ? "9px" : "7.5px",
+              fontSize: isCenter ? "7.5px" : "6px",
               fontWeight: "700",
               fontFamily: "'Inter', sans-serif",
               marginTop: "2px",
