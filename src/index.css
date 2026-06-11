@@ -5,19 +5,75 @@
 }
 
 body {
-  background: #050816;
-  font-family: Inter, Arial, sans-serif;
+  background: #030611;
+  font-family: 'Outfit', 'Inter', sans-serif;
   overflow: hidden;
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .app {
   display: flex;
   height: 100vh;
+  background-color: #030611;
 }
 
-h1,
-h2,
-h3,
-p {
-  color: white;
+/* Glassmorphism Styles */
+.glass-sidebar {
+  background: rgba(5, 8, 17, 0.7);
+  backdrop-filter: blur(25px);
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
 }
+
+.glass-panel {
+  background: rgba(5, 8, 17, 0.7);
+  backdrop-filter: blur(25px);
+  border-left: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Glow Text */
+.glow-text {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Selection dots pulsing */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 8px rgba(77, 166, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(77, 166, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(77, 166, 255, 0.4);
+  }
+}
