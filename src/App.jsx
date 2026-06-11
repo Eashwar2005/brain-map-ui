@@ -4,7 +4,7 @@ import BrainMap from "./components/BrainMap";
 import SkillPanel from "./components/SkillPanel";
 
 function App() {
-  const [activeSkill, setActiveSkill] = useState("programming");
+  const [activeSkill, setActiveSkill] = useState(null);
   const [focusMode, setFocusMode] = useState(true);
 
   return (

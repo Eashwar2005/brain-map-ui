@@ -268,6 +268,20 @@ const SKILL_DETAILS = {
   }
 };
 
+// Connected nodes map for related skills lookup
+const RELATED_MAP = {
+  programming: ["UI/UX Design", "Analytical Thinking", "Problem Solving"],
+  analytical: ["Communication", "Programming", "Problem Solving"],
+  communication: ["Leadership", "Analytical Thinking", "Problem Solving"],
+  leadership: ["Writing", "Communication", "Problem Solving"],
+  writing: ["Emotional Intelligence", "Leadership", "Databases", "Problem Solving"],
+  database: ["Data Structures & Algorithms", "Emotional Intelligence", "Writing", "Problem Solving"],
+  emotional_intelligence: ["Databases", "Writing", "Data Structures & Algorithms", "Problem Solving"],
+  ds_algo: ["UI/UX Design", "Databases", "Emotional Intelligence", "Problem Solving"],
+  uiux: ["Programming", "Data Structures & Algorithms", "Problem Solving"],
+  problem_solving: ["Programming", "Analytical Thinking", "Communication", "Leadership", "Writing", "Databases", "Emotional Intelligence", "Data Structures & Algorithms", "UI/UX Design"]
+};
+
 export default function SkillPanel({ activeSkill, setActiveSkill, focusMode }) {
   const [activeTab, setActiveTab] = useState("subskills");
 
@@ -290,7 +304,7 @@ export default function SkillPanel({ activeSkill, setActiveSkill, focusMode }) {
         flexDirection: "column",
         overflowY: "auto",
         zIndex: 10,
-        transform: `translate3d(${focusMode ? "340px" : "0px"}, 0, 0)`,
+        transform: `translate3d(${!activeSkill ? "340px" : "0px"}, 0, 0)`,
         transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
@@ -410,6 +424,50 @@ export default function SkillPanel({ activeSkill, setActiveSkill, focusMode }) {
       >
         {description}
       </p>
+
+      {/* Related Skills */}
+      {activeSkill && (
+        <div style={{ marginTop: "16px", padding: "0 8px" }}>
+          <h4
+            style={{
+              fontSize: "11px",
+              color: "#7f8da8",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              marginBottom: "8px",
+              fontWeight: "500",
+              textAlign: "center",
+            }}
+          >
+            Related Skills
+          </h4>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "6px",
+              justifyContent: "center",
+            }}
+          >
+            {RELATED_MAP[activeSkill]?.map((relName) => (
+              <span
+                key={relName}
+                style={{
+                  fontSize: "11px",
+                  color: "#ffffff",
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                  padding: "3px 8px",
+                  borderRadius: "12px",
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                {relName}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Tab Switchers (Subskills vs Milestones) */}
       <div

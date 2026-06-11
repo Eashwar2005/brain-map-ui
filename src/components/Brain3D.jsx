@@ -9,9 +9,10 @@ import {
   QuadraticBezierLine,
 } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { motion, AnimatePresence } from "framer-motion";
 
 // 3D coordinates distributed inside the brain mesh volume (X: [-3.0, 3.0], Y: [-2.0, 2.0], Z: [-1.5, 1.5])
 // Spaced out using the Z-depth axis to maintain a high distance between nodes without clipping the outer contour
@@ -154,95 +155,125 @@ const SKILLS_DATA = {
 };
 
 // 3D Skill Node Component
-function SkillNode3D({ skill, isActive, onClick }) {
+function SkillNode3D({ skill, isActive, isHovered, onHoverStart, onHoverEnd, onClick }) {
   const { id, title, percent, color, icon, isCenter } = skill;
   return (
-    <Html position={skill.pos} center distanceFactor={22} style={{ pointerEvents: "auto" }}>
-      <div
-        onClick={onClick}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          cursor: "pointer",
-          userSelect: "none",
-          transform: `scale(${isActive ? 1.05 : 0.95})`,
-          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-          width: isCenter ? "80px" : "64px",
+    <>
+      {/* 3D Invisible Raycast Click & Hover Target */}
+      <mesh
+        position={skill.pos}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          document.body.style.cursor = "pointer";
+          onHoverStart();
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          document.body.style.cursor = "auto";
+          onHoverEnd();
         }}
       >
-        {/* Glow Node Circle */}
+        <sphereGeometry args={[0.32, 16, 16]} />
+        <meshBasicMaterial visible={false} />
+      </mesh>
+
+      {/* HTML overlay positioned at node coordinates */}
+      <Html position={skill.pos} center distanceFactor={22} style={{ pointerEvents: "none" }}>
         <div
           style={{
-            width: isCenter ? "22px" : "16px",
-            height: isCenter ? "22px" : "16px",
-            borderRadius: "50%",
-            background: isActive
-              ? `radial-gradient(circle, ${color} 0%, rgba(3, 6, 17, 0.95) 100%)`
-              : "rgba(3, 6, 17, 0.85)",
-            border: `1.0px solid ${color}`,
-            boxShadow: isActive
-              ? `0 0 12px ${color}, 0 0 20px ${color}50, inset 0 0 3px ${color}`
-              : `0 0 4px ${color}15, inset 0 0 1px ${color}05`,
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
-            color: isActive ? "#ffffff" : color,
-            padding: isCenter ? "5px" : "3px",
-            transition: "all 0.3s ease",
+            userSelect: "none",
+            transform: `scale(${isHovered ? 1.2 : (isActive ? 1.15 : 0.95)})`,
+            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            width: isCenter ? "80px" : "64px",
           }}
         >
-          {icon}
-        </div>
-
-        {/* Labels underneath node (only displayed when active) */}
-        {isActive && (
+          {/* Glow Node Circle */}
           <div
             style={{
-              marginTop: "6px",
-              textAlign: "center",
-              lineHeight: "1.2",
-              background: "rgba(3, 6, 17, 0.9)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              padding: "4px 8px",
-              borderRadius: "6px",
-              boxShadow: `0 4px 10px rgba(0, 0, 0, 0.4), 0 0 10px ${color}25`,
-              backdropFilter: "blur(8px)",
-              pointerEvents: "none",
+              width: isCenter ? "22px" : "16px",
+              height: isCenter ? "22px" : "16px",
+              borderRadius: "50%",
+              background: isHovered || isActive
+                ? `radial-gradient(circle, ${color} 0%, rgba(3, 6, 17, 0.95) 100%)`
+                : "rgba(3, 6, 17, 0.85)",
+              border: `1.0px solid ${color}`,
+              boxShadow: isHovered
+                ? `0 0 18px ${color}, 0 0 28px ${color}70, inset 0 0 5px ${color}`
+                : (isActive
+                  ? `0 0 14px ${color}, 0 0 22px ${color}50, inset 0 0 4px ${color}`
+                  : `0 0 4px ${color}15, inset 0 0 1px ${color}05`),
               display: "flex",
-              flexDirection: "column",
               alignItems: "center",
-              width: "max-content",
-              minWidth: "75px",
+              justifyContent: "center",
+              color: isHovered || isActive ? "#ffffff" : color,
+              padding: isCenter ? "5px" : "3px",
+              transition: "all 0.3s ease",
             }}
           >
-            <div
-              style={{
-                color: "#ffffff",
-                fontSize: isCenter ? "9px" : "8px",
-                fontWeight: isCenter ? "600" : "500",
-                fontFamily: "'Outfit', sans-serif",
-                letterSpacing: "0.2px",
-                whiteSpace: "pre-line",
-              }}
-            >
-              {title}
-            </div>
-            <div
-              style={{
-                color: color,
-                fontSize: isCenter ? "8px" : "7.5px",
-                fontWeight: "700",
-                fontFamily: "'Inter', sans-serif",
-                marginTop: "2px",
-              }}
-            >
-              {percent}
-            </div>
+            {icon}
           </div>
-        )}
-      </div>
-    </Html>
+
+          {/* Floating Tooltip using Framer Motion (only shown on hover or when active) */}
+          <AnimatePresence>
+            {(isHovered || isActive) && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                style={{
+                  marginTop: "6px",
+                  textAlign: "center",
+                  lineHeight: "1.2",
+                  background: "rgba(3, 6, 17, 0.9)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  padding: "4px 8px",
+                  borderRadius: "6px",
+                  boxShadow: `0 4px 10px rgba(0, 0, 0, 0.4), 0 0 10px ${color}25`,
+                  backdropFilter: "blur(8px)",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  width: "max-content",
+                  minWidth: "75px",
+                }}
+              >
+                <div
+                  style={{
+                    color: "#ffffff",
+                    fontSize: isCenter ? "9px" : "8px",
+                    fontWeight: isCenter ? "600" : "500",
+                    fontFamily: "'Outfit', sans-serif",
+                    letterSpacing: "0.2px",
+                    whiteSpace: "pre-line",
+                  }}
+                >
+                  {title}
+                </div>
+                <div
+                  style={{
+                    color: color,
+                    fontSize: isCenter ? "8px" : "7.5px",
+                    fontWeight: "700",
+                    fontFamily: "'Inter', sans-serif",
+                    marginTop: "2px",
+                  }}
+                >
+                  {percent}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </Html>
+    </>
   );
 }
 
@@ -303,34 +334,70 @@ function BrainModel() {
 }
 
 // Neural connection bezier line
-function NeuralLine({ start, end, mid, color }) {
-  const ref = useRef();
+function NeuralLine({ start, end, mid, color, isHighlighted }) {
+  const lineRef = useRef();
+  const pulseRef = useRef();
+  const pulseTime = useRef(Math.random()); // Randomize starting offset so connection pulses aren't locked in lockstep
 
-  useFrame(({ clock }) => {
-    if (ref.current?.material) {
-      ref.current.material.opacity =
-        0.18 + Math.abs(Math.sin(clock.elapsedTime * 2.5)) * 0.35;
+  useFrame(({ clock }, delta) => {
+    // Animate line opacity
+    if (lineRef.current?.material) {
+      if (isHighlighted) {
+        // Brighter and faster pulse for highlighted lines
+        lineRef.current.material.opacity =
+          0.4 + Math.abs(Math.sin(clock.elapsedTime * 5.0)) * 0.5;
+      } else {
+        // Normal breathing opacity
+        lineRef.current.material.opacity =
+          0.15 + Math.abs(Math.sin(clock.elapsedTime * 2.0)) * 0.25;
+      }
+    }
+
+    // Animate pulse particle position along the bezier curve
+    if (isHighlighted && pulseRef.current) {
+      // Advance pulse time (wraps around 0 to 1)
+      pulseTime.current = (pulseTime.current + delta * 1.5) % 1.0;
+      const t = pulseTime.current;
+
+      // Quadratic bezier formula
+      const x = (1 - t) * (1 - t) * start[0] + 2 * (1 - t) * t * mid[0] + t * t * end[0];
+      const y = (1 - t) * (1 - t) * start[1] + 2 * (1 - t) * t * mid[1] + t * t * end[1];
+      const z = (1 - t) * (1 - t) * start[2] + 2 * (1 - t) * t * mid[2] + t * t * end[2];
+
+      pulseRef.current.position.set(x, y, z);
+      pulseRef.current.visible = true;
+    } else if (pulseRef.current) {
+      pulseRef.current.visible = false;
     }
   });
 
   return (
-    <QuadraticBezierLine
-      ref={ref}
-      start={start}
-      end={end}
-      mid={mid}
-      color={color}
-      lineWidth={1.2}
-      transparent
-      opacity={0.3}
-      depthTest={false}
-      renderOrder={999}
-      raycast={() => null}
-    />
+    <group>
+      <QuadraticBezierLine
+        ref={lineRef}
+        start={start}
+        end={end}
+        mid={mid}
+        color={color}
+        lineWidth={isHighlighted ? 2.2 : 1.2}
+        transparent
+        opacity={0.3}
+        depthTest={false}
+        renderOrder={999}
+        raycast={() => null}
+      />
+      {/* Neural Pulse Particle */}
+      <mesh ref={pulseRef} visible={false}>
+        <sphereGeometry args={[0.04, 8, 8]} />
+        <meshBasicMaterial color={color} transparent opacity={0.8} />
+      </mesh>
+    </group>
   );
 }
 
 export default function Brain3D({ activeSkill, setActiveSkill }) {
+  const [hoveredSkill, setHoveredSkill] = useState(null);
+
   // Connections map
   const connections = useMemo(() => {
     const list = [
@@ -381,6 +448,8 @@ export default function Brain3D({ activeSkill, setActiveSkill }) {
 
       return {
         id: `${conn.start}-${conn.end}`,
+        startId: conn.start,
+        endId: conn.end,
         start: startNode.pos,
         end: endNode.pos,
         mid: [mx * 1.05, my * 1.05, mz + offset],
@@ -408,11 +477,12 @@ export default function Brain3D({ activeSkill, setActiveSkill }) {
         {/* Render local colored point lights on the brain wireframe at node locations */}
         {Object.values(SKILLS_DATA).map((node) => {
           const isSelected = activeSkill === node.id;
+          const isHovered = hoveredSkill === node.id;
           return (
             <pointLight
               key={`light-${node.id}`}
               position={[node.pos[0], node.pos[1], node.pos[2] - 0.2]}
-              intensity={isSelected ? 6 : 1.5}
+              intensity={isHovered ? 8 : (isSelected ? 6 : 1.5)}
               distance={3.5}
               color={node.color}
             />
@@ -427,15 +497,21 @@ export default function Brain3D({ activeSkill, setActiveSkill }) {
         <BrainModel />
 
         {/* Curved Neural Connection Lines */}
-        {connections.map((conn) => (
-          <NeuralLine
-            key={conn.id}
-            start={conn.start}
-            end={conn.end}
-            mid={conn.mid}
-            color={conn.color}
-          />
-        ))}
+        {connections.map((conn) => {
+          const isHighlighted = hoveredSkill
+            ? conn.startId === hoveredSkill || conn.endId === hoveredSkill
+            : (activeSkill ? conn.startId === activeSkill || conn.endId === activeSkill : false);
+          return (
+            <NeuralLine
+              key={conn.id}
+              start={conn.start}
+              end={conn.end}
+              mid={conn.mid}
+              color={conn.color}
+              isHighlighted={isHighlighted}
+            />
+          );
+        })}
 
         {/* Interactive 3D HTML skill nodes */}
         {Object.values(SKILLS_DATA).map((skill) => (
@@ -443,6 +519,9 @@ export default function Brain3D({ activeSkill, setActiveSkill }) {
             key={skill.id}
             skill={skill}
             isActive={activeSkill === skill.id}
+            isHovered={hoveredSkill === skill.id}
+            onHoverStart={() => setHoveredSkill(skill.id)}
+            onHoverEnd={() => setHoveredSkill(null)}
             onClick={() => setActiveSkill(skill.id)}
           />
         ))}
