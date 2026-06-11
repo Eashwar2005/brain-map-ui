@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Sidebar() {
+export default function Sidebar({ focusMode }) {
   const [activeItem, setActiveItem] = useState("Brain Map");
 
   const items = [
@@ -63,6 +63,10 @@ export default function Sidebar() {
     <div
       className="glass-sidebar"
       style={{
+        position: "absolute",
+        left: 0,
+        top: 0,
+        bottom: 0,
         width: "240px",
         padding: "24px 16px",
         color: "white",
@@ -70,6 +74,9 @@ export default function Sidebar() {
         flexDirection: "column",
         height: "100%",
         zIndex: 10,
+        overflow: "hidden",
+        transform: `translate3d(${focusMode ? "-240px" : "0px"}, 0, 0)`,
+        transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
       {/* MindOS Logo */}

@@ -375,7 +375,7 @@ export default function Brain3D({ activeSkill, setActiveSkill }) {
   return (
     <Canvas
       camera={{
-        position: [0, 0, 11.5],
+        position: [0, 0, 15.0],
         fov: 40,
       }}
       style={{ flex: 1, pointerEvents: "auto" }}

@@ -268,7 +268,7 @@ const SKILL_DETAILS = {
   }
 };
 
-export default function SkillPanel({ activeSkill, setActiveSkill }) {
+export default function SkillPanel({ activeSkill, setActiveSkill, focusMode }) {
   const [activeTab, setActiveTab] = useState("subskills");
 
   // Fallback to programming if activeSkill not matched
@@ -279,15 +279,19 @@ export default function SkillPanel({ activeSkill, setActiveSkill }) {
     <div
       className="glass-panel custom-scrollbar"
       style={{
+        position: "absolute",
+        right: 0,
+        top: 0,
+        bottom: 0,
         width: "340px",
-        height: "100%",
         padding: "24px 20px",
         color: "white",
         display: "flex",
         flexDirection: "column",
         overflowY: "auto",
         zIndex: 10,
-        position: "relative",
+        transform: `translate3d(${focusMode ? "340px" : "0px"}, 0, 0)`,
+        transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
       {/* Top Close Button */}

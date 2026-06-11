@@ -1,6 +1,6 @@
 import Brain3D from "./Brain3D";
 
-export default function BrainMap({ activeSkill, setActiveSkill }) {
+export default function BrainMap({ activeSkill, setActiveSkill, focusMode, setFocusMode }) {
   return (
     <div
       style={{
@@ -12,93 +12,96 @@ export default function BrainMap({ activeSkill, setActiveSkill }) {
         flexDirection: "column",
       }}
     >
-      {/* Top Header Section */}
+      {/* Left Title Section */}
       <div
         style={{
           position: "absolute",
           top: "40px",
-          left: "40px",
-          right: "40px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
+          left: focusMode ? "40px" : "280px",
           zIndex: 100,
-          pointerEvents: "none",
+          transition: "left 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
-        <div style={{ pointerEvents: "auto" }}>
-          <h1
-            style={{
-              color: "#ffffff",
-              fontSize: "18px",
-              fontWeight: "400",
-              letterSpacing: "4px",
-              fontFamily: "'Outfit', sans-serif",
-              textTransform: "uppercase",
-              opacity: 0.95,
-            }}
-          >
-            YOUR BRAIN MAP
-          </h1>
-
-          <p
-            style={{
-              color: "#5c6b8c",
-              fontSize: "13px",
-              marginTop: "8px",
-              fontWeight: "300",
-            }}
-          >
-            Visualize your skills. Expand your potential.
-          </p>
-        </div>
-
-        {/* Focus Mode button */}
-        <button
-          className="glass-card"
+        <h1
           style={{
-            pointerEvents: "auto",
-            display: "flex",
-            alignItems: "center",
-            padding: "8px 16px",
-            borderRadius: "30px",
-            color: "#d6dcee",
-            fontSize: "12px",
+            color: "#ffffff",
+            fontSize: "18px",
             fontWeight: "400",
-            cursor: "pointer",
-            border: "1px solid rgba(255,255,255,0.06)",
-            background: "rgba(255, 255, 255, 0.02)",
-            transition: "all 0.3s ease",
-            backdropFilter: "blur(8px)",
+            letterSpacing: "4px",
+            fontFamily: "'Outfit', sans-serif",
+            textTransform: "uppercase",
+            opacity: 0.95,
           }}
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ marginRight: "8px" }}
-          >
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          Focus Mode
-        </button>
+          YOUR BRAIN MAP
+        </h1>
+
+        <p
+          style={{
+            color: "#5c6b8c",
+            fontSize: "13px",
+            marginTop: "8px",
+            fontWeight: "300",
+          }}
+        >
+          Visualize your skills. Expand your potential.
+        </p>
       </div>
 
+      {/* Right Focus Mode button */}
+      <button
+        className="glass-card"
+        onClick={() => setFocusMode(!focusMode)}
+        style={{
+          position: "absolute",
+          top: "40px",
+          right: focusMode ? "40px" : "380px",
+          zIndex: 100,
+          display: "flex",
+          alignItems: "center",
+          padding: "8px 16px",
+          borderRadius: "30px",
+          color: focusMode ? "#ffffff" : "#d6dcee",
+          fontSize: "12px",
+          fontWeight: "500",
+          cursor: "pointer",
+          border: focusMode 
+            ? "1px solid rgba(77, 166, 255, 0.6)" 
+            : "1px solid rgba(255,255,255,0.06)",
+          background: focusMode 
+            ? "rgba(77, 166, 255, 0.18)" 
+            : "rgba(255, 255, 255, 0.02)",
+          boxShadow: focusMode ? "0 0 15px rgba(77, 166, 255, 0.3)" : "none",
+          transition: "all 0.3s ease, right 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{ marginRight: "8px" }}
+        >
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        Focus Mode
+      </button>
+
       {/* 3D Canvas component */}
-      <Brain3D activeSkill={activeSkill} setActiveSkill={setActiveSkill} />
+      <Brain3D activeSkill={activeSkill} setActiveSkill={setActiveSkill} focusMode={focusMode} />
 
       {/* Bottom Controls Section */}
       <div
