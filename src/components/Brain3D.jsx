@@ -121,6 +121,9 @@ function BrainModel() {
         roughness: 0,
         metalness: 1,
         clearcoat: 1,
+
+        depthWrite: false,
+        depthTest: false,
       });
     }
   });
@@ -140,29 +143,29 @@ function NeuralLine({
   const ref = useRef();
 
   useFrame(({ clock }) => {
-    if (ref.current) {
+    if (ref.current?.material) {
       ref.current.material.opacity =
-        0.12 +
-        Math.abs(
-          Math.sin(clock.elapsedTime * 2)
-        ) *
-          0.2;
+        0.15 +
+        Math.abs(Math.sin(clock.elapsedTime * 3)) * 0.35;
     }
   });
 
   return (
-    <QuadraticBezierLine
-      ref={ref}
-      start={start}
-      end={end}
-      mid={mid}
-      color={color}
-      lineWidth={1.5}
-      transparent
-      opacity={0.2}
-    />
+  <QuadraticBezierLine
+    ref={ref}
+    start={start}
+    end={end}
+    mid={mid}
+    color={color}
+    lineWidth={2.5}
+    transparent
+    opacity={0.3}
+    depthTest={false}
+    renderOrder={999}
+   />
   );
-}
+ }
+
 
 export default function Brain3D() {
   const skills = {
@@ -219,14 +222,14 @@ export default function Brain3D() {
      start={[
      skills.programming[0],
      skills.programming[1],
-     0.3,
+     0.8,
     ]}
     end={[
      skills.core[0],
      skills.core[1],
-     0.3,
+     0.8,
     ]}
-     mid={[2.5, 1.5, 0.3]}
+     mid={[4, 2, 1.5]}
      color="#55b3ff"
     />
 
@@ -234,12 +237,12 @@ export default function Brain3D() {
      start={[
      skills.analytical[0],
      skills.analytical[1],
-     0.3,
+     0.8,
     ]}
     end={[
      skills.core[0],
      skills.core[1],
-     0.3,
+     0.8,
      ]}
      mid={[1, 2, 0.3]}
      color="#b7ff8a"
@@ -249,12 +252,12 @@ export default function Brain3D() {
       start={[
       skills.communication[0],
       skills.communication[1],
-      0.3,
+      0.8,
     ]}
      end={[
      skills.core[0],
      skills.core[1],
-     0.3,
+     0.8,
      ]}
     mid={[-2.5, 1.2, 0.3]}
     color="#d58cff"
@@ -264,12 +267,12 @@ export default function Brain3D() {
      start={[
      skills.uiux[0],
      skills.uiux[1],
-     0.3,
+     0.8,
     ]}
     end={[
      skills.core[0],
      skills.core[1],
-     0.3,
+     0.8,
     ]}
     mid={[-2, 2.5, 0.3]}
     color="#86f7ff"
@@ -279,14 +282,14 @@ export default function Brain3D() {
      start={[
      skills.database[0],
      skills.database[1],
-     0.3,
+     0.8,
     ]}
      end={[
      skills.core[0],
      skills.core[1],
-     0.3,
+     0.8,
     ]}
-     mid={[-1, -2, 0.3]}
+     mid={[-2.5, -1.5, 1.5]}
      color="#7ef9ff"
      />
 
@@ -294,14 +297,14 @@ export default function Brain3D() {
      start={[
      skills.leadership[0],
      skills.leadership[1],
-     0.3,
+     0.8,
      ]}
      end={[
      skills.core[0],
      skills.core[1],
-     0.3,
+     0.8,
     ]}
-     mid={[2, -2, 0.3]}
+     mid={[3.5, -1.5, 1.5]}
      color="#ff7ab8"
     />
       {/* Glow Points */}
@@ -400,12 +403,12 @@ export default function Brain3D() {
       />
 
       <EffectComposer>
-        <Bloom
-          intensity={5}
-          luminanceThreshold={0}
-          luminanceSmoothing={0.8}
-        />
-      </EffectComposer>
+      <Bloom
+        intensity={8}
+        luminanceThreshold={0}
+        luminanceSmoothing={0.6}
+      />
+</EffectComposer>
     </Canvas>
   );
 }
