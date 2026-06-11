@@ -13,14 +13,15 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-// 3D coordinates distributed inside the brain mesh volume (X: [-3.3, 3.3], Y: [-2.5, 2.5], Z: [-1.2, 0.8])
+// 3D coordinates distributed inside the brain mesh volume (X: [-3.0, 3.0], Y: [-2.0, 2.0], Z: [-1.5, 1.5])
+// Spaced out using the Z-depth axis to maintain a high distance between nodes without clipping the outer contour
 const SKILLS_DATA = {
   programming: {
     id: "programming",
     title: "Programming",
     percent: "90%",
     color: "#55b3ff",
-    pos: [-2.8, 1.5, -0.7],
+    pos: [-2.5, 2.2, 1.5],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <polyline points="16 18 22 12 16 6"></polyline>
@@ -33,7 +34,7 @@ const SKILLS_DATA = {
     title: "Analytical Thinking",
     percent: "82%",
     color: "#b7ff8a",
-    pos: [-0.2, 2.3, 0.4],
+    pos: [-0.2, 2.7, -1.0],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
@@ -45,7 +46,7 @@ const SKILLS_DATA = {
     title: "Communication",
     percent: "75%",
     color: "#d58cff",
-    pos: [2.7, 1.6, -0.8],
+    pos: [2.2, 1.1, 1.0],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -60,7 +61,7 @@ const SKILLS_DATA = {
     title: "Leadership",
     percent: "70%",
     color: "#ff7ab8",
-    pos: [3.1, -0.3, 0.6],
+    pos: [2.5, -0.2, -0.9],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -74,7 +75,7 @@ const SKILLS_DATA = {
     title: "Writing",
     percent: "55%",
     color: "#86f7ff",
-    pos: [2.0, -1.4, -0.5],
+    pos: [1.8, -2.1, 0.9],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <path d="M12 20h9"></path>
@@ -87,7 +88,7 @@ const SKILLS_DATA = {
     title: "Databases",
     percent: "60%",
     color: "#7ef9ff",
-    pos: [-0.4, -1.1, -1.1],
+    pos: [-0.8, 1.9, 1.8],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
@@ -101,7 +102,7 @@ const SKILLS_DATA = {
     title: "Emotional Intelligence",
     percent: "68%",
     color: "#d58cff",
-    pos: [0.3, -2.2, 0.5],
+    pos: [0.4, -1.5, -2.4],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -113,7 +114,7 @@ const SKILLS_DATA = {
     title: "Data Structures\n& Algorithms",
     percent: "80%",
     color: "#ffaa66",
-    pos: [-2.1, -1.5, 0.6],
+    pos: [-1.7, -1.3, -0.8],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
@@ -127,7 +128,7 @@ const SKILLS_DATA = {
     title: "UI/UX Design",
     percent: "65%",
     color: "#86f7ff",
-    pos: [-3.0, -0.1, -0.5],
+    pos: [-2.5, -0.2, 0.9],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
         <rect x="3" y="3" width="7" height="9"></rect>
@@ -142,7 +143,7 @@ const SKILLS_DATA = {
     title: "Problem Solving",
     percent: "85%",
     color: "#ffd76d",
-    pos: [0.0, 0.2, 0.2],
+    pos: [0.0, 0.2, -2.2],
     isCenter: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}>
@@ -258,7 +259,7 @@ function Particles({ count = 1500, color = "#4da6ff", size = 0.015 }) {
   }, [count]);
 
   return (
-    <Points positions={positions} stride={3}>
+    <Points positions={positions} stride={3} raycast={() => null}>
       <PointMaterial
         transparent
         color={color}
@@ -279,6 +280,7 @@ function BrainModel() {
   useMemo(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
+        child.raycast = () => null; // Disable raycasting to prevent blocking node clicks
         child.material = new THREE.MeshStandardMaterial({
           color: "#162e70",
           transparent: true,
@@ -323,6 +325,7 @@ function NeuralLine({ start, end, mid, color }) {
       opacity={0.3}
       depthTest={false}
       renderOrder={999}
+      raycast={() => null}
     />
   );
 }
@@ -367,7 +370,7 @@ export default function Brain3D({ activeSkill, setActiveSkill }) {
       const mx = (startNode.pos[0] + endNode.pos[0]) / 2;
       const my = (startNode.pos[1] + endNode.pos[1]) / 2;
       const mz = (startNode.pos[2] + endNode.pos[2]) / 2;
-      
+
       // Arc curvature based on distance
       const dist = Math.sqrt(
         Math.pow(startNode.pos[0] - endNode.pos[0], 2) +
